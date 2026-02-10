@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MOAUS | 404</title>
+  <meta name="description" content="페이지를 찾을 수 없습니다." />
+  <meta name="robots" content="noindex" />
+
+  <!-- 주의: 아래 경로는 BASE_PATH 설정이 맞아야 합니다 -->
+  <link rel="stylesheet" href="/assets/css/404.css" />
+  <script src="/assets/js/404.js" defer></script>
+  <script src="/assets/js/img-fallback.js" defer></script>
+  <script src="/assets/js/external-links.js" defer></script>
+  <script src="/assets/js/prefetch.js" defer></script>
+</head>
+
+<body>
+  <main id="main" class="card" role="status" aria-live="polite">
+    <p class="kicker">MOAUS / V-EXX</p>
+    <h1>404</h1>
+    <p class="sub">
+      요청하신 페이지를 찾을 수 없습니다.<br/>
+      <span class="count" id="countdown">3</span>초 후 홈으로 이동합니다.
+    </p>
+
+    <div class="path" aria-label="requested path">
+      <span>요청 경로</span>
+      <code id="reqPath">/</code>
+    </div>
+
+    <div class="actions">
+      <a class="btn" id="homeLink" href="/">홈으로 즉시 이동</a>
+      <a class="btn ghost" id="contactLink" href="/contact.html">CONTACT</a>
+    </div>
+
+    <p class="hint">
+      불편이 있으신분은 CONTACT를 눌러 문의해주세요.
+    </p>
+  </main>
+</body>
+</html>

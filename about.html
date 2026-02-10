@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>MOAUS | ABOUT</title>
+  <meta name="description" content="MOAUS ABOUT" />
+
+  <!-- Open Graph (옵션) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="MOAUS | ABOUT" />
+  <meta property="og:description" content="marketing through sport" />
+  <meta property="og:image" content="/assets/og.jpg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo:wght@700&family=Ubuntu:wght@700&family=Nanum+Gothic:wght@400&display=swap" rel="stylesheet">
+
+  <!-- 공통 레이아웃 (헤더/드로어/푸터) -->
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <!-- ABOUT 전용 -->
+  <link rel="stylesheet" href="/assets/css/about.css" />
+  <!-- History (연혁) 전용 -->
+  <link rel="stylesheet" href="/assets/css/history.css" />
+
+  <!-- 공통 동작: include + 헤더 스크롤 + 드로어 + active 표시 -->
+  <script src="/assets/js/layout.js" defer></script>
+
+  <script src="/assets/js/img-fallback.js" defer></script>
+
+</head>
+
+<body>
+  <!-- 공통 Header -->
+  <div data-include="partials/header.html"></div>
+
+  <!-- 공통 Aside(드로어) -->
+  <div data-include="partials/aside.html"></div>
+<main id="main">
+  <!-- Page Hero -->
+  <section class="pageHero" id="top">
+    <div class="pageHero__bg" aria-hidden="true"></div>
+    <div class="pageHero__content">
+      <div>
+        <div class="kicker">MOAUS / V-EXX</div>
+        <h1 class="heroTitle">ABOUT</h1>
+        <p class="sub">
+            모아어스(MoaUs)는 '열정적인 팬들의 세계를 모아, 우리만의 스타일로 재해석하는 곳'입니다.<br>
+            우리는 단순한 굿즈를 넘어, 팬덤이 가진 고유한 문화와 가치를 담은 아이템을 선보입니다.<br>
+            '모으다'라는 뜻의 '모아(Moa)'는 수많은 구단과 브랜드의 독창적인 시도를 한데 모으겠다는 의미를,<br>
+            '우리'를 뜻하는 '어스(Us)'는 같은 열정을 공유하는 팬들의 커뮤니티를 상징합니다.<br>
+        </p>
+
+        <div class="pillRow" aria-label="Keywords">
+          <div class="pill">Sports Marketing</div>
+          <div class="pill">Uniform / Apparel</div>
+          <div class="pill">Merchandising</div>
+          <div class="pill">Brand Execution</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About / Mission -->
+  <section class="section" id="about">
+    <div class="section__inner">
+      <h2 class="sectionTitle">WHAT WE DO</h2>
+      <div class="grid2">
+        <div class="card">
+<!--
+          <h3>WHAT WE DO</h3>
+-->
+          <ul class="list">
+            <li>구단/브랜드 머천다이징 기획 및 제작</li>
+            <li>시즌/이벤트 판매 전략 및 현장 운영</li>
+            <li>유니폼/트레이닝/응원용품 디자인 및 생산</li>
+            <li>브랜드 콘텐츠와 제품 경험의 일관성 설계</li>
+            <li>상품 라인업·가격 정책·마진 구조 설계 및 손익 관리</li>
+            <li>협력사 발굴부터 견적/발주/샘플/양산까지 생산·품질·납기 통합 관리</li>
+            <li>온라인/오프라인 판매 데이터 분석 기반 리오더, 재고 최적화 및 품절/과재고 리스크 관리</li>
+            <li>라이선스/IP 및 CI 가이드 준수, 심의·승인 프로세스 운영 및 커뮤니케이션 조율</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Organization -->
+<!--
+  <section class="section section--dark" id="organization">
+    <div class="section__inner">
+      <h2 class="sectionTitle">ORGANIZATION</h2>
+
+      <div class="grid3">
+        <div class="card">
+          <h3>DESIGN</h3>
+          <p>유니폼/머천다이징 디자인, 브랜드 가이드, 그래픽/패키지, 콘텐츠 톤앤매너.</p>
+          <div class="divider"></div>
+          <ul class="list">
+            <li>키비주얼 / 룩북</li>
+            <li>로고/모노그램/패턴</li>
+            <li>제품 기획/사이징</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>PRODUCTION</h3>
+          <p>원단/부자재, 샘플링, 양산, 품질관리. “납기”라는 현실을 담당.</p>
+          <div class="divider"></div>
+          <ul class="list">
+            <li>샘플 & 피팅</li>
+            <li>생산/검수/납품</li>
+            <li>재고/리오더</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>OPERATIONS</h3>
+          <p>스토어 운영, 행사 판매, POS/정산, 리포팅. 돈이 흐르는 곳은 여기.</p>
+          <div class="divider"></div>
+          <ul class="list">
+            <li>현장 판매/CS</li>
+            <li>정산/매출 리포트</li>
+            <li>물류/출고 관리</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+-->
+    <!-- History -->
+    <div data-include="partials/history.html"></div>
+    <!-- Partners -->
+    <div data-include="partials/partners.html"></div>
+</main>
+  <!-- 공통 Footer -->
+  <div data-include="partials/footer.html"></div>
+</body>
+</html>
+
+

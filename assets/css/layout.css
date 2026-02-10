@@ -1,0 +1,603 @@
+:root{
+  /* =========================
+     THEME TOKENS (DEFAULT: DARK)
+     ========================= */
+  --bg:#0b0b0b;
+  --fg:#ffffff;
+
+  --muted:rgba(255,255,255,.70);
+  --muted2:rgba(255,255,255,.45);
+
+  --line:rgba(255,255,255,.12);
+  --line2:rgba(255,255,255,.18);
+
+  --panel:#0a0a0a;                       /* drawer 같은 패널 배경 */
+  --panelBorder:rgba(255,255,255,.10);
+  --overlay:rgba(0,0,0,.55);             /* drawer backdrop */
+
+  --headerBg:rgba(0,0,0,.15);
+  --headerBgScrolled:rgba(0,0,0,.65);
+  --navUnderline:rgba(255,255,255,.80);
+
+  --linkBorder:rgba(255,255,255,.10);
+  --linkBg:rgba(255,255,255,.02);
+
+  --credit:#999;
+  --creditHover:#ccc;
+
+  /* Accent */
+  --accent:#C8A24A;
+  --accentBg:rgba(200,162,74,.10);
+  --accentStroke:rgba(200,162,74,.35);
+
+  /* Shadows */
+  --shadowMd:0 10px 28px rgba(0,0,0,.28);
+  --shadowLg:0 18px 50px rgba(0,0,0,.55);
+  --shadowXl:0 28px 90px rgba(0,0,0,.60);
+
+  /* Header progress */
+  --progressTrack:rgba(255,255,255,.08);
+  --progressFill:rgba(255,255,255,.75);
+
+  /* Motion */
+  --easeOut:cubic-bezier(.2,.8,.2,1);
+  --tFast:160ms;
+  --tMed:260ms;
+  --tSlow:420ms;
+
+  /* Menu icon hover */
+  --menuHoverScale:1.14;                 /* 원하는 만큼 조절 */
+  --menuHoverDur:520ms;                  /* “서서히” 핵심 */
+
+  /* Drawer sizing */
+  --headerH:72px;
+  --max:1200px;
+
+  /* Drawer premium look */
+  --drawerW:min(380px, 92vw);
+  --drawerRadius:22px;
+  --drawerGlassA:rgba(255,255,255,.06);
+  --drawerGlassB:rgba(255,255,255,.02);
+  --drawerBg:rgba(12, 14, 18, .88);
+  --drawerBorder:rgba(255,255,255,.12);
+  --drawerDivider:rgba(255,255,255,.08);
+
+  --drawerBtnH:44px;
+
+  --drawerItemBg:rgba(255,255,255,.04);
+  --drawerItemHoverBg:rgba(255,255,255,.07);
+  --drawerItemActiveBg:rgba(255,255,255,.09);
+
+  --drawerItemBorder:rgba(255,255,255,.10);
+  --drawerItemHoverBorder:rgba(255,255,255,.18);
+  --drawerItemActiveBorder:rgba(255,255,255,.20);
+
+  --drawerFocusOutline:rgba(255,255,255,.34);
+  --drawerActiveBar:rgba(255,255,255,.80);
+
+  --drawerHoverScale:1.02;               /* 메뉴 항목 hover scale */
+
+  /* Browser UI hint */
+  color-scheme: dark;
+}
+
+/* =========================
+   LIGHT THEME OVERRIDE
+   ========================= */
+html[data-theme="light"]{
+  --bg:#ffffff;
+  --fg:rgba(0,0,0,.90);
+
+  --muted:rgba(0,0,0,.62);
+  --muted2:rgba(0,0,0,.48);
+
+  --line:rgba(0,0,0,.12);
+  --line2:rgba(0,0,0,.18);
+
+  --panel:#f6f6f6;
+  --panelBorder:rgba(0,0,0,.12);
+  --overlay:rgba(0,0,0,.25);
+
+  --headerBg:rgba(255,255,255,.55);
+  --headerBgScrolled:rgba(255,255,255,.85);
+  --navUnderline:rgba(0,0,0,.75);
+
+  --linkBorder:rgba(0,0,0,.12);
+  --linkBg:rgba(0,0,0,.03);
+
+  --credit:rgba(0,0,0,.55);
+  --creditHover:rgba(0,0,0,.75);
+
+  --progressTrack:rgba(0,0,0,.08);
+  --progressFill:rgba(0,0,0,.70);
+
+  /* Drawer premium look (light용) */
+  --drawerBg:rgba(255,255,255,.92);
+  --drawerBorder:rgba(0,0,0,.10);
+  --drawerDivider:rgba(0,0,0,.08);
+
+  --drawerItemBg:rgba(0,0,0,.03);
+  --drawerItemHoverBg:rgba(0,0,0,.05);
+  --drawerItemActiveBg:rgba(0,0,0,.06);
+
+  --drawerItemBorder:rgba(0,0,0,.10);
+  --drawerItemHoverBorder:rgba(0,0,0,.16);
+  --drawerItemActiveBorder:rgba(0,0,0,.18);
+
+  --drawerFocusOutline:rgba(0,0,0,.24);
+  --drawerActiveBar:rgba(0,0,0,.72);
+
+  color-scheme: light;
+}
+
+*{ box-sizing:border-box; }
+
+html,body{
+  margin:0; padding:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:"Nanum Gothic", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; }
+
+/* =========================
+   Header
+   ========================= */
+.header{
+  position:fixed; left:0; top:0; right:0;
+  height:var(--headerH);
+  display:flex; align-items:center;
+  z-index:1000;
+  background:var(--headerBg);
+  border-bottom:1px solid transparent;
+  transition: background .2s ease, border-color .2s ease, backdrop-filter .2s ease;
+  backdrop-filter:saturate(120%) blur(0px);
+  -webkit-backdrop-filter:saturate(120%) blur(0px);
+}
+.header.scrolled{
+  background:var(--headerBgScrolled);
+  border-color:var(--line);
+  backdrop-filter:saturate(120%) blur(10px);
+  -webkit-backdrop-filter:saturate(120%) blur(10px);
+}
+.header__inner{
+  width:min(var(--max), 100%);
+  margin:0 auto;
+  padding:0 16px;
+  display:grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items:center;
+  gap:12px;
+}
+.nav{
+  display:flex; align-items:center; gap:18px;
+  font-family:"Ubuntu","Exo",sans-serif;
+  letter-spacing:.3px;
+  font-size:14px;
+}
+.nav a{ opacity:.9; position:relative; }
+.nav a:hover{ opacity:1; }
+.nav a.active{ opacity:1; }
+.nav a.active::after{
+  content:"";
+  position:absolute;
+  left:0; right:0;
+  bottom:-10px;
+  height:2px;
+  background:var(--navUnderline);
+}
+
+.logo{ display:flex; align-items:center; justify-content:center; }
+.logo img{ height:28px; width:auto; display:block; }
+
+.actions{ display:flex; justify-content:flex-end; align-items:center; }
+
+.headerProgress{
+  position:absolute;
+  left:0; right:0; bottom:0;
+  height:2px;
+  background: var(--progressTrack);
+  overflow:hidden;
+}
+.headerProgress::before{
+  content:"";
+  display:block;
+  height:100%;
+  width: var(--scrollP, 0%);
+  background: var(--progressFill);
+}
+
+/* =========================
+   Buttons
+   ========================= */
+.iconBtn{
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  line-height:0;
+}
+.iconBtn--img{
+  border:0;
+  background:transparent;
+  padding:8px;
+}
+.hamburger{ width:44px; justify-content:center; }
+
+.iconImg{ width:24px; height:24px; display:block; }
+
+/* ✅ 메뉴 버튼 hover “서서히” 커지기 */
+#openDrawer .iconImg{
+  transform: scale(1);
+  transform-origin:center;
+  transition: transform var(--menuHoverDur) var(--easeOut);
+  will-change: transform;
+}
+#openDrawer:hover .iconImg,
+#openDrawer:focus-visible .iconImg{
+  transform: scale(var(--menuHoverScale));
+}
+#openDrawer:active .iconImg{
+  transform: scale(calc((var(--menuHoverScale) - 1) * .35 + 1));
+}
+
+/* =========================
+   THEME TOGGLE ICONS (옵션)
+   ========================= */
+.themeToggle{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.themeIcon{
+  width:20px;
+  height:20px;
+  display:block;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+html[data-theme="dark"] .themeIcon--sun{ display:none; }
+html[data-theme="light"] .themeIcon--moon{ display:none; }
+
+/* sr-only */
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+/* =========================
+   Drawer Backdrop
+   (display 토글 대신 opacity/visibility로 애니메이션 가능하게)
+   ========================= */
+.drawerBackdrop{
+  position:fixed; inset:0;
+  z-index:1200;
+  background:var(--overlay);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition: opacity .22s ease, visibility 0s linear .22s;
+}
+.drawerBackdrop.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition: opacity .22s ease, visibility 0s linear 0s;
+}
+
+/* =========================
+   Drawer (Premium)
+   ========================= */
+.drawer{
+  position:fixed;
+  top:0; right:0;
+  width: var(--drawerW);
+  height:100%;
+  z-index:1300;
+
+  padding: 18px 16px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+
+  background:
+    linear-gradient(180deg, var(--drawerGlassA), var(--drawerGlassB)),
+    var(--drawerBg);
+  border-left: 1px solid var(--drawerBorder);
+  border-top-left-radius: var(--drawerRadius);
+  border-bottom-left-radius: var(--drawerRadius);
+
+  box-shadow: var(--shadowXl);
+
+  transform: translateX(110%);
+  transition: transform .28s var(--easeOut);
+}
+.drawer.open{ transform: translateX(0); }
+
+.drawerTop{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 10px 8px 14px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid var(--drawerDivider);
+}
+.drawerTitle{
+  font-family:"Exo","Ubuntu",sans-serif;
+  letter-spacing:1.4px;
+  text-transform: uppercase;
+  font-size:13px;
+  opacity:.92;
+}
+
+/* 닫기 버튼(있다면) */
+.drawerTop button,
+.drawerTop .iconBtn,
+.drawerTop [data-drawer-close]{
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid var(--line2);
+  background: rgba(255,255,255,.06);
+  color: var(--fg);
+  cursor: pointer;
+  transition: transform var(--tFast) ease, background var(--tFast) ease, border-color var(--tFast) ease;
+}
+html[data-theme="light"] .drawerTop button,
+html[data-theme="light"] .drawerTop .iconBtn,
+html[data-theme="light"] .drawerTop [data-drawer-close]{
+  background: rgba(0,0,0,.03);
+}
+.drawerTop button:hover,
+.drawerTop .iconBtn:hover,
+.drawerTop [data-drawer-close]:hover{
+  transform: scale(1.03);
+  background: rgba(255,255,255,.10);
+  border-color: var(--line2);
+}
+html[data-theme="light"] .drawerTop button:hover,
+html[data-theme="light"] .drawerTop .iconBtn:hover,
+html[data-theme="light"] .drawerTop [data-drawer-close]:hover{
+  background: rgba(0,0,0,.05);
+}
+
+/* 메뉴 링크 (중복 선언 제거: 여기 하나로 끝) */
+.drawer a{
+  position: relative;
+
+  min-height: var(--drawerBtnH);
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+
+  padding: 13px 14px;
+  border-radius: 16px;
+
+  border: 1px solid var(--drawerItemBorder);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)),
+    var(--drawerItemBg);
+
+  font-family:"Ubuntu","Exo",sans-serif;
+  font-size: 13.5px;
+  letter-spacing: .6px;
+  text-align:center;
+
+  transform: translateZ(0) scale(1);
+  transition:
+    transform var(--tSlow) var(--easeOut),
+    background var(--tMed) ease,
+    border-color var(--tMed) ease,
+    box-shadow var(--tMed) ease;
+  will-change: transform;
+}
+
+/* ✅ hover: “서서히” 커지기 + 살짝 떠오르기 */
+.drawer a:hover{
+  transform: translateY(-1px) scale(var(--drawerHoverScale));
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0)),
+    var(--drawerItemHoverBg);
+  border-color: var(--drawerItemHoverBorder);
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+}
+html[data-theme="light"] .drawer a:hover{
+  box-shadow: 0 12px 30px rgba(0,0,0,.12);
+}
+
+/* active/current 스타일 */
+.drawer a.active{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0)),
+    var(--drawerItemActiveBg);
+  border-color: var(--drawerItemActiveBorder);
+}
+
+/* 왼쪽 포커스 바 */
+.drawer a::before{
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  width: 3px;
+  height: 18px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: transparent;
+  opacity: 0;
+  transition: opacity var(--tFast) ease, height var(--tFast) ease;
+}
+.drawer a.active::before{
+  background: var(--drawerActiveBar);
+  opacity: .95;
+  height: 20px;
+}
+
+/* 키보드 포커스 */
+.drawer a:focus-visible{
+  outline: 2px solid var(--drawerFocusOutline);
+  outline-offset: 3px;
+}
+
+/* 링크 간격 */
+.drawer a + a{ margin-top: 8px; }
+
+/* Drawer(aside)에서 현재 페이지 링크 숨김 */
+.drawer a.is-current,
+#drawer a.is-current{
+  display:none;
+}
+
+/* =========================
+   Drawer Social (Instagram)
+   ========================= */
+.drawer a.drawerSocial{
+  justify-content:center;
+  padding:0;
+}
+.drawer a.drawerSocial .drawerSocial__img{
+  height: calc(var(--drawerBtnH) * 0.56);
+  width: auto;
+  object-fit: contain;
+  display:block;
+  max-height: 28px;
+}
+
+/* Drawer bottom credit */
+.drawerCredit{
+  margin-top:auto;
+  padding-top:14px;
+  border-top:1px solid var(--drawerDivider);
+
+  font-size:11px;
+  line-height:1.5;
+  color: var(--muted2);
+  text-align:center;
+
+  padding-bottom:6px;
+}
+.drawerCredit__dev{
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* =========================
+   Footer
+   ========================= */
+footer{
+  padding:26px 0;
+  background:var(--bg);
+  border-top:1px solid var(--panelBorder);
+}
+.footer__inner{
+  width:min(var(--max), 100%);
+  margin:0 auto;
+  padding:0 16px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.8;
+  display:flex;
+  gap:16px;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+.footer__links a{ opacity:.9; margin-right:12px; }
+.footer__links a:hover{ opacity:1; }
+.footer__copy{ margin-left:auto; }
+
+/* credit toggle */
+.credit-toggle{
+  display:inline;
+  padding:0;
+  margin:0;
+  border:0;
+  background:none;
+  color:var(--credit);
+  cursor:pointer;
+  font:inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.credit-toggle:hover{ color:var(--creditHover); }
+.credit-toggle:focus-visible{
+  outline:2px solid var(--creditHover);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+/* Partners */
+.partners{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:14px;
+  align-items:center;
+}
+.partnerLogo{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.02);
+  padding:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:92px;
+}
+.partnerLogo img{
+  max-width:100%;
+  max-height:52px;
+  width:auto;
+  height:auto;
+  display:block;
+  opacity:.92;
+}
+
+/* Easter Egg*/
+#cursorFollower{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 26px;            /* 작지만 인식 가능 */
+  height: auto;
+  opacity: 0;             /* 기본 숨김 */
+  pointer-events: none;   /* 클릭 방해 금지 */
+  user-select: none;
+  z-index: 999999;
+  transform: translate(-9999px, -9999px);
+  will-change: transform, opacity;
+  transition: opacity .15s ease;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); /* 어두운 배경에서도 보이게 */
+}
+
+/* responsive */
+@media (max-width: 920px){
+  .header__inner{ grid-template-columns: auto 1fr auto; }
+  .nav{ display:none; }
+  .nav a.active::after{ display:none; }
+}
+
+/* =========================
+   Reduced motion
+   ========================= */
+@media (prefers-reduced-motion: reduce){
+  #openDrawer .iconImg{ transition:none; transform:none; }
+  .drawerBackdrop{ transition:none; }
+  .drawer{ transition:none; transform: translateX(100%); }
+  .drawer.open{ transform: translateX(0); }
+  .drawer a{ transition:none; }
+  .drawer a:hover{ transform:none; }
+}
+
+

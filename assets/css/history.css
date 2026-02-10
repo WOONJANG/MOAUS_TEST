@@ -1,0 +1,277 @@
+/* =========================
+   HISTORY TIMELINE (DARK)
+   about.html 배경이 검정일 때 가독성 맞춘 버전
+   ========================= */
+
+/* 섹션 자체가 투명이어도 되지만, 혹시 섹션 배경이 따로 있으면 아래로 강제 가능 */
+/* #history { background: transparent; } */
+
+#history .historyTimeline{
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+#history .sectionTitle{
+  text-align:center;             
+}
+
+#history .historyRow{
+  /* 튜닝 변수 */
+  --logoH: 72px;
+  --dotSize: 18px;
+  --gapLogoDot: 12px;
+  --gapDotText: 14px;
+
+  /* 다크 배경 기준 색상 */
+  --bgColor: var(--pageBg, var(--bg, #000));                 /* 배경색(없으면 검정) */
+  --cardText: var(--text, #fff);                             /* 기본 텍스트(없으면 흰색) */
+  --mutedText: var(--textMuted, rgba(255,255,255,.70));      /* 보조 텍스트 */
+  --lineColor: var(--lineSoft, rgba(255,255,255,.18));       /* 가로/세로 라인 */
+
+  /* 점 컬러 기본값(행별로 override) */
+  --dotColor: #b12a2a;
+
+  position: relative;
+  list-style: none;
+  padding: 0 6px;
+  margin: 0;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: clamp(12px, 2vw, 26px);
+}
+
+/* 가로 라인 */
+#history .historyRow::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--logoH) + var(--gapLogoDot) + (var(--dotSize) / 2));
+  height: 2px;
+  background: var(--lineColor);
+  border-radius: 2px;
+}
+
+/* 행별 색 */
+#history .historyRow--red{  --dotColor:#b12a2a; }
+#history .historyRow--blue{ --dotColor:#3c78d8; }
+#history .historyRow--navy{ --dotColor:#5860a6; }
+
+#history .historyItem{
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: var(--cardText);
+}
+
+/* 로고 영역 */
+#history .historyLogoWrap{
+  height: var(--logoH);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* (추천) 검정 배경에서 로고가 묻히는 것 방지용 "플레이트"
+   로고가 이미 밝거나 테두리 잘 살아있으면 이 블록을 지워도 됨 */
+#history .historyLogoWrap::before{
+  content:"";
+  position:absolute;
+  inset: 8px 10px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+#history .historyLogo{
+  position: relative;
+  z-index: 1;
+  max-height: var(--logoH);
+  max-width: 130px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+
+  /* 흰 로고는 더 또렷하게, 어두운 로고도 약간 분리 */
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,.6));
+}
+
+#history .historyDot{
+  width: var(--dotSize);
+  height: var(--dotSize);
+  border-radius: 999px;
+  background: var(--dotColor);
+  margin-top: var(--gapLogoDot);
+  position: relative;
+  z-index: 2;
+
+  /* 라인 위에서 점이 배경에 묻히지 않게 "배경 링" */
+  box-shadow: 0 0 0 6px var(--bgColor);
+}
+
+#history .historyText{
+  margin-top: var(--gapDotText);
+  display: grid;
+  gap: 6px;
+}
+
+#history .historyPeriod{
+  font-weight: 900;
+  letter-spacing: .2px;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+#history .historyTitle{
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+#history .historyMeta{
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--mutedText);
+  font-weight: 650;
+}
+
+/* =========================
+   MOBILE: 세로 타임라인 전환
+   ========================= */
+@media (max-width: 860px){
+  #history .historyTimeline{ gap: 28px; }
+
+  #history .historyRow{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 0;
+  }
+
+  /* 세로 라인 */
+  #history .historyRow::before{
+    left: 11px;
+    right: auto;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    height: auto;
+  }
+
+  #history .historyItem{
+    display: grid;
+    grid-template-columns: 22px 88px 1fr;
+    gap: 12px;
+    align-items: start;
+    text-align: left;
+  }
+
+  #history .historyDot{
+    margin-top: 12px;
+    justify-self: center;
+    box-shadow: 0 0 0 5px var(--bgColor);
+  }
+
+  #history .historyLogoWrap{
+    height: auto;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 2px;
+  }
+
+  #history .historyLogoWrap::before{
+    inset: 0;                 /* 모바일에서는 작은 박스에 맞게 */
+    border-radius: 14px;
+  }
+
+  #history .historyLogo{
+    max-width: 88px;
+    max-height: 42px;
+  }
+
+  #history .historyText{ margin-top: 0; }
+  #history .historyPeriod{ font-size: 16px; }
+  #history .historyTitle{ font-size: 15px; }
+  #history .historyMeta{ font-size: 13px; }
+}
+/* =========================
+   FIX: 좁아질 때 행이 깨지지 않게 (가로 스크롤 모드)
+   - 1100px 이하: 각 ROW를 한 줄로 고정 + 가로 스크롤
+   - 860px 이하: 기존처럼 세로 타임라인
+   ========================= */
+
+/* 혹시 상위 레이아웃이 잘라먹으면(overflow:hidden) 이걸로 해제 */
+#history,
+#history .section__inner{
+  overflow: visible;
+}
+
+@media (max-width: 1100px){
+  /* ROW를 “한 줄”로 고정해서 끊김 방지 */
+  #history .historyRow{
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 22px;
+
+    /* 잘림 대신 스크롤 */
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+
+    /* 보기 좋게: 스크롤 스냅 */
+    scroll-snap-type: x proximity;
+
+    /* 양끝 여백 (첫/끝 아이템이 벽에 붙어 답답한 거 방지) */
+    padding: 0 10px 10px;
+
+    /* 라인이 패딩에 맞게 들어가도록 */
+    position: relative;
+  }
+
+  #history .historyRow::before{
+    left: 10px;
+    right: 10px;
+  }
+
+  /* 아이템 폭을 고정해서 “절대 줄바꿈” 안 나게 */
+  #history .historyItem{
+    flex: 0 0 180px;   /* 필요하면 160~220 사이로 조절 */
+    scroll-snap-align: start;
+  }
+
+  /* 로고가 크면 오버플로우 유발하니 상한을 조금 낮춤 */
+  #history .historyLogo{
+    max-width: 120px;
+  }
+
+  /* 스크롤바가 너무 못생기면… 최소한의 정리 */
+  #history .historyRow{
+    scrollbar-width: thin; /* Firefox */
+  }
+  #history .historyRow::-webkit-scrollbar{
+    height: 8px;
+  }
+  #history .historyRow::-webkit-scrollbar-thumb{
+    background: rgba(255,255,255,.18);
+    border-radius: 999px;
+  }
+  #history .historyRow::-webkit-scrollbar-track{
+    background: transparent;
+  }
+}
+
+/* 860px 이하(모바일)에서는 기존 세로 타임라인이 더 자연스러우니 그대로 */
+@media (max-width: 860px){
+  #history .historyRow{
+    overflow-x: visible;
+  }
+  #history .historyItem{
+    flex: initial;
+  }
+}
