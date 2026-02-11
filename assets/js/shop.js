@@ -2,19 +2,12 @@
   const clubs = Array.isArray(window.CLUBS) ? window.CLUBS : [];
   const DEFAULT_TAGS = [];
 
-  // 숨김 카드 공개 키워드
-  const REVEAL_KEY_RAW = "박은태";
-  const REVEAL_KEY = (REVEAL_KEY_RAW || "").toString();
-
   const norm = (s) => (s || "")
     .toLowerCase()
     .replace(/\s+/g, "")
     .replace(/[^\p{L}\p{N}]/gu, "");
 
   const safeText = (s) => (s ?? "").toString();
-
-  // 기본 화면(전체/초기)에서는 hidden 제외
-  const visibleClubs = clubs.filter(c => !(c && c.hidden));
 
   function renderTags(container, tagList){
     container.innerHTML = "";
@@ -143,49 +136,80 @@
     grid.appendChild(frag);
   }
 
+  /* =========================================================
+     Hidden 카드 검색 노출 로직
+     - clubs.js에서 { hidden:true, revealKey:"박은태" } 처럼 추가하면
+       revealKey 포함 검색 시에만 해당 카드가 결과에 노출됨
+     ========================================================= */
+
+  const visibleClubs = clubs.filter(c => !(c && c.hidden));
+  const hiddenClubs = clubs.filter(c => (c && c.hidden && c.revealKey));
+
+  const revealKeysNorm = hiddenClubs
+    .map(c => norm(c.revealKey))
+    .filter(Boolean);
+
+  function stripRevealKeys(nq){
+    let term = nq;
+    let matched = false;
+
+    // 입력에 포함된 revealKey들을 전부 제거해서
+    // "박은태 용인" -> "용인" 으로 일반 검색되게
+    for(const k of revealKeysNorm){
+      if(!k) continue;
+      if(term.includes(k)){
+        matched = true;
+        term = term.split(k).join("");
+      }
+    }
+    return { term, matched };
+  }
+
   function searchClubs(q){
     const nq = norm(q);
+
+    // 기본(검색어 없음)에서는 숨김 항목 제외
     if(!nq) return visibleClubs;
 
-    const revealNorm = norm(REVEAL_KEY);
-    const wantsHidden = revealNorm && nq.includes(revealNorm);
-    const term = wantsHidden ? nq.split(revealNorm).join("") : nq;
+    const { term, matched } = stripRevealKeys(nq);
+    const wantsHidden = matched;
+
+    // 숨김(hidden) 항목: revealKey가 포함될 때만 노출
+    const hiddenMatches = wantsHidden
+      ? hiddenClubs.filter(c => nq.includes(norm(c.revealKey)))
+      : [];
+
+    // revealKey만 쳤을 때(예: "박은태", "재희"): hidden만 리턴
+    if(!term) return hiddenMatches;
 
     // 1) 정확히 일치(구단명) 우선
-    if(term){
-      const exact = visibleClubs.filter(c => norm(c.name) === term);
-      if(exact.length) return exact;
-    }
+    const exact = visibleClubs.filter(c => norm(c.name) === term);
+    if(exact.length) return [...hiddenMatches, ...exact];
 
     // 2) 일반(visible) 필터
-    const normalMatches = term ? visibleClubs.filter(c =>
+    const normalMatches = visibleClubs.filter(c =>
       norm(c.name).includes(term) ||
       norm(c.store).includes(term) ||
       (Array.isArray(c.tags) && c.tags.some(t => norm(t.text).includes(term)))
-    ) : [];
+    );
 
-    // 3) 숨김(hidden) 항목: '박은태'가 포함될 때만 노출
-    const hiddenMatches = wantsHidden ? clubs.filter(c => {
-      if(!(c && c.hidden)) return false;
-      const key = norm(c.revealKey || "");
-      return !!key && nq.includes(key);
-    }) : [];
-
-    // '박은태'만 쳤을 때: normalMatches는 비어 있고 hidden만 리턴됨
     return [...hiddenMatches, ...normalMatches];
   }
 
-  // 초기 화면은 hidden 제외
+  // 초기 화면: hidden 제외
   render(visibleClubs);
 
   const input = document.getElementById("q");
   const btnSearch = document.getElementById("btnSearch");
   const btnAll = document.getElementById("btnAll");
 
-  const applySearch = () => render(searchClubs(input.value));
+  const applySearch = () => render(searchClubs(input?.value || ""));
 
   btnSearch && btnSearch.addEventListener("click", applySearch);
-  btnAll && btnAll.addEventListener("click", () => { input.value = ""; render(visibleClubs); });
+  btnAll && btnAll.addEventListener("click", () => {
+    if(input) input.value = "";
+    render(visibleClubs);
+  });
 
   input && input.addEventListener("keydown", (e) => {
     if(e.key === "Enter") applySearch();
