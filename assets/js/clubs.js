@@ -83,8 +83,8 @@ window.CLUBS = [
   {
     name: "재희",
     store: "재희",
-    image: "./assets/img/park-euntae.png",
-    logo: "./assets/img/park-euntae.png",
+    image: "./assets/img/jaehee.png",
+    logo: "./assets/img/jaehee.png",
     url: "https://namu.wiki/w/%EC%9E%AC%ED%9D%AC(NCT)",
     hidden: true,
     revealKey: "재희",
@@ -93,4 +93,5 @@ window.CLUBS = [
     ]
   }
 ];
+
 
