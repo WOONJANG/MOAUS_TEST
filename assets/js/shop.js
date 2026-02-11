@@ -142,76 +142,36 @@
        revealKey 포함 검색 시에만 해당 카드가 결과에 노출됨
      ========================================================= */
 
-  const visibleClubs = clubs.filter(c => !(c && c.hidden));
-  const hiddenClubs = clubs.filter(c => (c && c.hidden && c.revealKey));
+// 기본(초기/전체)에서는 숨김 항목 제외
+const visibleClubs = clubs.filter(c => !(c && c.hidden));
+const hiddenClubs  = clubs.filter(c => (c && c.hidden && c.revealKey));
 
-  const revealKeysNorm = hiddenClubs
-    .map(c => norm(c.revealKey))
-    .filter(Boolean);
+// revealKey(정규화) -> hidden 카드들 매핑
+const hiddenMap = hiddenClubs.reduce((acc, c) => {
+  const k = norm(c.revealKey);
+  if(!k) return acc;
+  (acc[k] ||= []).push(c);
+  return acc;
+}, {});
 
-  function stripRevealKeys(nq){
-    let term = nq;
-    let matched = false;
+function searchClubs(q){
+  const nq = norm(q);
+  if(!nq) return visibleClubs;
 
-    // 입력에 포함된 revealKey들을 전부 제거해서
-    // "박은태 용인" -> "용인" 으로 일반 검색되게
-    for(const k of revealKeysNorm){
-      if(!k) continue;
-      if(term.includes(k)){
-        matched = true;
-        term = term.split(k).join("");
-      }
-    }
-    return { term, matched };
-  }
+  // ✅ 히든은 "정확히 일치"할 때만 노출
+  // 예) nq === "박은태" 일 때만 박은태 카드 등장
+  //     nq === "박은태용인" 이면 hiddenMap에 없으니 히든 절대 안 나옴
+  if(hiddenMap[nq]) return hiddenMap[nq];
 
-  function searchClubs(q){
-    const nq = norm(q);
+  // 일반 검색은 visible만 대상으로 수행
+  const exact = visibleClubs.filter(c => norm(c.name) === nq);
+  if(exact.length) return exact;
 
-    // 기본(검색어 없음)에서는 숨김 항목 제외
-    if(!nq) return visibleClubs;
+  return visibleClubs.filter(c =>
+    norm(c.name).includes(nq) ||
+    norm(c.store).includes(nq) ||
+    (Array.isArray(c.tags) && c.tags.some(t => norm(t.text).includes(nq)))
+  );
+}
 
-    const { term, matched } = stripRevealKeys(nq);
-    const wantsHidden = matched;
 
-    // 숨김(hidden) 항목: revealKey가 포함될 때만 노출
-    const hiddenMatches = wantsHidden
-      ? hiddenClubs.filter(c => nq.includes(norm(c.revealKey)))
-      : [];
-
-    // revealKey만 쳤을 때(예: "박은태", "재희"): hidden만 리턴
-    if(!term) return hiddenMatches;
-
-    // 1) 정확히 일치(구단명) 우선
-    const exact = visibleClubs.filter(c => norm(c.name) === term);
-    if(exact.length) return [...hiddenMatches, ...exact];
-
-    // 2) 일반(visible) 필터
-    const normalMatches = visibleClubs.filter(c =>
-      norm(c.name).includes(term) ||
-      norm(c.store).includes(term) ||
-      (Array.isArray(c.tags) && c.tags.some(t => norm(t.text).includes(term)))
-    );
-
-    return [...hiddenMatches, ...normalMatches];
-  }
-
-  // 초기 화면: hidden 제외
-  render(visibleClubs);
-
-  const input = document.getElementById("q");
-  const btnSearch = document.getElementById("btnSearch");
-  const btnAll = document.getElementById("btnAll");
-
-  const applySearch = () => render(searchClubs(input?.value || ""));
-
-  btnSearch && btnSearch.addEventListener("click", applySearch);
-  btnAll && btnAll.addEventListener("click", () => {
-    if(input) input.value = "";
-    render(visibleClubs);
-  });
-
-  input && input.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") applySearch();
-  });
-})();
