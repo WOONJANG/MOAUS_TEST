@@ -138,40 +138,62 @@
 
   /* =========================================================
      Hidden 카드 검색 노출 로직
-     - clubs.js에서 { hidden:true, revealKey:"박은태" } 처럼 추가하면
-       revealKey 포함 검색 시에만 해당 카드가 결과에 노출됨
+     규칙:
+     1) 검색어가 revealKey와 "정확히 일치"할 때만 히든 노출
+     2) 검색어에 revealKey가 섞여 있으면(박은태용인/박은태 용인),
+        히든은 노출하지 않고 revealKey를 제거한 나머지로 일반 검색
      ========================================================= */
 
-// 기본(초기/전체)에서는 숨김 항목 제외
-const visibleClubs = clubs.filter(c => !(c && c.hidden));
-const hiddenClubs  = clubs.filter(c => (c && c.hidden && c.revealKey));
+  const visibleClubs = clubs.filter(c => !(c && c.hidden));
+  const hiddenClubs  = clubs.filter(c => (c && c.hidden && c.revealKey));
 
-// revealKey(정규화) -> hidden 카드들 매핑
-const hiddenMap = hiddenClubs.reduce((acc, c) => {
-  const k = norm(c.revealKey);
-  if(!k) return acc;
-  (acc[k] ||= []).push(c);
-  return acc;
-}, {});
+  // revealKey(정규화) -> hidden 카드들 매핑 (같은 키에 여러 카드 가능)
+  const hiddenMap = hiddenClubs.reduce((acc, c) => {
+    const k = norm(c.revealKey);
+    if(!k) return acc;
+    (acc[k] ||= []).push(c);
+    return acc;
+  }, {});
 
-function searchClubs(q){
-  const nq = norm(q);
-  if(!nq) return visibleClubs;
+  const hiddenKeys = Object.keys(hiddenMap);
 
-  // ✅ 히든은 "정확히 일치"할 때만 노출
-  // 예) nq === "박은태" 일 때만 박은태 카드 등장
-  //     nq === "박은태용인" 이면 hiddenMap에 없으니 히든 절대 안 나옴
-  if(hiddenMap[nq]) return hiddenMap[nq];
+  // 검색어에서 히든 키워드(들)를 제거해서 일반 검색용 term 만들기
+  function stripHiddenKeys(nq){
+    let term = nq;
+    for(const k of hiddenKeys){
+      if(!k) continue;
+      if(term.includes(k)){
+        term = term.split(k).join("");
+      }
+    }
+    return term;
+  }
 
-  // 일반 검색은 visible만 대상으로 수행
-  const exact = visibleClubs.filter(c => norm(c.name) === nq);
-  if(exact.length) return exact;
+  function searchClubs(q){
+    const nq = norm(q);
+    if(!nq) return visibleClubs;
 
-  return visibleClubs.filter(c =>
-    norm(c.name).includes(nq) ||
-    norm(c.store).includes(nq) ||
-    (Array.isArray(c.tags) && c.tags.some(t => norm(t.text).includes(nq)))
-  );
-}
+    // ✅ 1) 히든은 "정확히 일치"할 때만 노출
+    //    "박은태" -> 히든 뜸
+    //    "박은태용인" / "박은태 용인"(정규화: 박은태용인) -> 여기 걸리지 않음
+    if(hiddenMap[nq]) return hiddenMap[nq];
+
+    // ✅ 2) 히든 키워드가 섞여 있으면 제거하고 남은 걸로 일반 검색
+    const term = stripHiddenKeys(nq);
+
+    // 남는 게 없는데 히든 정확일치도 아니면(예: 히든키 2개를 붙여쓴 경우)
+    // 일단 결과 없음 처리
+    if(!term) return [];
+
+    // 일반 검색은 visible만 대상으로 수행
+    const exact = visibleClubs.filter(c => norm(c.name) === term);
+    if(exact.length) return exact;
+
+    return visibleClubs.filter(c =>
+      norm(c.name).includes(term) ||
+      norm(c.store).includes(term) ||
+      (Array.isArray(c.tags) && c.tags.some(t => norm(t.text).includes(term)))
+    );
+  }
 
 
