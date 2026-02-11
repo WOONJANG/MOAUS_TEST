@@ -138,16 +138,15 @@
 
   /* =========================================================
      Hidden 카드 검색 노출 로직
-     규칙:
-     1) 검색어가 revealKey와 "정확히 일치"할 때만 히든 노출
-     2) 검색어에 revealKey가 섞여 있으면(박은태용인/박은태 용인),
-        히든은 노출하지 않고 revealKey를 제거한 나머지로 일반 검색
+     목표:
+     - "박은태" -> 박은태(히든)만 노출
+     - "박은태용인" / "박은태 용인" -> 박은태(히든) 노출 안 함, "용인"으로 일반검색
+     - (재희 등 추가) clubs.js에 hidden:true + revealKey:"재희" 추가만 하면 자동 반영
      ========================================================= */
 
   const visibleClubs = clubs.filter(c => !(c && c.hidden));
   const hiddenClubs  = clubs.filter(c => (c && c.hidden && c.revealKey));
 
-  // revealKey(정규화) -> hidden 카드들 매핑 (같은 키에 여러 카드 가능)
   const hiddenMap = hiddenClubs.reduce((acc, c) => {
     const k = norm(c.revealKey);
     if(!k) return acc;
@@ -157,7 +156,6 @@
 
   const hiddenKeys = Object.keys(hiddenMap);
 
-  // 검색어에서 히든 키워드(들)를 제거해서 일반 검색용 term 만들기
   function stripHiddenKeys(nq){
     let term = nq;
     for(const k of hiddenKeys){
@@ -171,24 +169,22 @@
 
   function searchClubs(q){
     const nq = norm(q);
+
+    // 검색어 없으면: visible만
     if(!nq) return visibleClubs;
 
-    // ✅ 1) 히든은 "정확히 일치"할 때만 노출
-    //    "박은태" -> 히든 뜸
-    //    "박은태용인" / "박은태 용인"(정규화: 박은태용인) -> 여기 걸리지 않음
+    // 1) 히든은 "정확히 일치"할 때만 노출
     if(hiddenMap[nq]) return hiddenMap[nq];
 
-    // ✅ 2) 히든 키워드가 섞여 있으면 제거하고 남은 걸로 일반 검색
+    // 2) 히든 키가 섞여 있으면 제거하고 남은 term으로만 일반 검색
     const term = stripHiddenKeys(nq);
+    if(!term) return []; // 히든 정확일치도 아니고 term도 없으면 결과 없음
 
-    // 남는 게 없는데 히든 정확일치도 아니면(예: 히든키 2개를 붙여쓴 경우)
-    // 일단 결과 없음 처리
-    if(!term) return [];
-
-    // 일반 검색은 visible만 대상으로 수행
+    // (visible) 구단명 정확일치 우선
     const exact = visibleClubs.filter(c => norm(c.name) === term);
     if(exact.length) return exact;
 
+    // (visible) 부분일치
     return visibleClubs.filter(c =>
       norm(c.name).includes(term) ||
       norm(c.store).includes(term) ||
@@ -196,4 +192,23 @@
     );
   }
 
+  // 초기 화면: hidden 제외
+  render(visibleClubs);
 
+  const input = document.getElementById("q");
+  const btnSearch = document.getElementById("btnSearch");
+  const btnAll = document.getElementById("btnAll");
+
+  const applySearch = () => render(searchClubs(input?.value || ""));
+
+  btnSearch && btnSearch.addEventListener("click", applySearch);
+
+  btnAll && btnAll.addEventListener("click", () => {
+    if(input) input.value = "";
+    render(visibleClubs);
+  });
+
+  input && input.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") applySearch();
+  });
+})();
