@@ -163,3 +163,52 @@
     if(e.key === "Enter") render(searchClubs(input.value));
   });
 })();
+
+/*===============================================================================================================*/
+function searchClubs(q){
+  const nq = norm(q);
+
+  // 기본(검색어 없음)에서는 숨김 항목 제외
+  if(!nq) return visibleClubs;
+
+  const wantsHidden = nq.includes(norm(REVEAL_KEY_RAW));
+
+  // 정확히 일치(구단명) 우선
+  const exact = clubs.filter(c => {
+    if(c && c.hidden){
+      const key = norm(c.revealKey || ""); // revealKey가 없으면 숨김은 절대 노출 안 함
+      if(!key || !wantsHidden) return false;
+    }
+    return norm(c.name) === nq;
+  });
+  if(exact.length) return exact;
+
+  return clubs.filter(c => {
+    // 숨김 항목은 '박은태' 키워드가 있을 때만 노출(나머지 검색어는 무시하고 키워드 포함만 보면 됨)
+    if(c && c.hidden){
+      const key = norm(c.revealKey || "");
+      return !!key && nq.includes(key);
+    }
+
+    return (
+      norm(c.name).includes(nq) ||
+      norm(c.store).includes(nq) ||
+      (Array.isArray(c.tags) && c.tags.some(t => norm(t.text).includes(nq)))
+    );
+  });
+}
+
+  render(visibleClubs);
+
+  const input = document.getElementById("q");
+  const btnSearch = document.getElementById("btnSearch");
+  const btnAll = document.getElementById("btnAll");
+
+  btnSearch && btnSearch.addEventListener("click", () => render(searchClubs(input.value)));
+  btnAll && btnAll.addEventListener("click", () => { input.value = ""; render(visibleClubs); });
+
+  input && input.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") render(searchClubs(input.value));
+  });
+})();
+
