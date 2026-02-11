@@ -65,8 +65,28 @@ window.CLUBS = [
       { text: "Collaboration", tone: "accent" },
       { text: "MD", tone: "normal" },
     ]
-  }
+  },
+  {
+  name: "박은태",
+  store: "스페셜 카드",
+  image: "/assets/img/park-euntae.png",
+  logo: "/assets/img/park-euntae.png",
+  url: "https://namu.wiki/w/%EB%B0%95%EC%9D%80%ED%83%9C",
+  hidden: true,
+  revealKey: "박은태"
+},
+
+  {
+  name: "재희",
+  store: "스페셜 카드",
+  image: "/assets/img/jaehee.png",
+  logo: "/assets/img/jaehee.png",
+  url: "https://namu.wiki/w/%EC%9E%AC%ED%9D%AC(NCT)",
+  hidden: true,
+  revealKey: "재희"
+},
 ];
+
 
 
 
